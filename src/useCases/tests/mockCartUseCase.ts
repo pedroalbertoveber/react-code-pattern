@@ -11,10 +11,10 @@ export class MockCartUseCase extends Cart {
       throw new Error('Item already exists in cart');
     }
 
-   const response = await this.addProduct(item);
-   this.notify();
+    const response = await this.addProduct(item);
+    this.notify();
 
-   return response;
+    return response;
   }
 
   removeItem(itemId: number) {

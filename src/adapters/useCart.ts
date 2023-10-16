@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
 
 export const useCartAdapter = () => {
+  // contexto do useCase
   const useCaseContext = useCart();
   const [items, setItems] = useState(useCaseContext.getItems());
 

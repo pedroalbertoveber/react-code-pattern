@@ -8,7 +8,8 @@ export class Cart {
     return this.items.find(item => item.id === id);
   }
 
-  addProduct(item: Item) {
+  addProduct(item: Item): Promise<Item> {
+    // Chama instancia do httpAdapter(axios || outro)
     return new Promise((resolve) => {
       setTimeout(() => {
         this.items.push(item);

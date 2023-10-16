@@ -6,12 +6,15 @@ export class CartUseCase extends Cart {
     return this.getProductById(id);
   }
 
-  async addItem(item: Item) {
+  async addItem(item: Item): Promise<Item | unknown> {
+    // Validações de campos
+    // Validação de inserções duplicadas
     if (this.getItemById(item.id)) {
       alert('Item already exists in cart');
       throw new Error('Item already exists in cart');
     }
 
+    // entidade
     const response = await this.addProduct(item);
     this.notify();
 
@@ -24,6 +27,8 @@ export class CartUseCase extends Cart {
   }
 
   getItems(): Item[] {
+    // Ordenar array
+    // Regras de disponibilidade
     return this.getProducts();
   }
 
