@@ -1,4 +1,3 @@
-
 import { Box, Grid } from "@mui/material";
 import { Product } from "../components/Product";
 import { CartProvider } from "../contexts/CartContext";
