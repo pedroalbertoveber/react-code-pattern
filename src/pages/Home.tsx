@@ -1,18 +1,22 @@
 import { Box, Grid } from "@mui/material";
 import { Product } from "../components/Product";
 import { CartProvider } from "../contexts/CartContext";
-import { Item } from "../entities/item";
 import { ShoppingCart } from "../components/ShoppingCart";
+import { useGetItems } from "../adapters/useItem";
 
 export function Home() {
-  const sampleItem = new Item(Math.random(), "Sample Product", 10.99);
 
+  const { data } = useGetItems();
   return (
     <CartProvider>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Box sx={{ display: 'flex' }}>
-            <Product item={sampleItem} />
+            {
+              data?.map((item) => (
+                <Product key={item.id} item={item} />
+              ))
+            }
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>
