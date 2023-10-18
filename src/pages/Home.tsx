@@ -1,30 +1,21 @@
-import { Box, Grid } from "@mui/material";
-import { Product } from "../components/Product";
-import { CartProvider } from "../contexts/CartContext";
-import { ShoppingCart } from "../components/ShoppingCart";
-import { useGetItems } from "../adapters/useItem";
+import { Stack, Typography } from "@mui/material";
+import { useItemsContext } from "../contexts/ItemsContext";
+import { useEffect } from "react";
 
 export function Home() {
+  const { getAllItems, ItemEntity } = useItemsContext();
 
-  const { data } = useGetItems();
+  console.log(ItemEntity.hooks.useItem.items)
+
+  useEffect(() => {
+    getAllItems.execute()
+  }, []);
+
   return (
-    <CartProvider>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Box sx={{ display: 'flex' }}>
-            {
-              data?.map((item) => (
-                <Product key={item.id} item={item} />
-              ))
-            }
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Box sx={{ display: 'flex' }}>
-            <ShoppingCart />
-          </Box>
-        </Grid>
-      </Grid>
-    </CartProvider>
+    <Stack>
+      <Typography>
+        Home
+      </Typography>
+    </Stack>
   );
 }
