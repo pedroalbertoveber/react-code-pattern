@@ -1,21 +1,18 @@
-import { Stack, Typography } from "@mui/material";
-import { useItemsContext } from "../contexts/ItemsContext";
 import { useEffect } from "react";
 
-export function Home() {
-  const { getAllItems, ItemEntity } = useItemsContext();
+import { Stack, Typography } from "@mui/material";
+import { useItemsContext } from "../contexts/ItemsContext";
 
-  console.log(ItemEntity.hooks.useItem.items)
+export function Home() {
+  const { getAndSetCache } = useItemsContext();
 
   useEffect(() => {
-    getAllItems.execute()
+    getAndSetCache.execute();
   }, []);
 
   return (
     <Stack>
-      <Typography>
-        Home
-      </Typography>
+      <Typography>Home</Typography>
     </Stack>
   );
 }

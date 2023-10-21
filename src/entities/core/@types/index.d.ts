@@ -17,7 +17,7 @@ export type SetCacheProps<Attributes> = {
   value: Attributes;
 }
 
-export type SetEntity<HttpResponse> = {
+export type GetHttpAndSetCacheProps<HttpResponse> = {
   customReturn?: keyof HttpResponse | null;
   url?: string | null;
   cachePath?: string | null;

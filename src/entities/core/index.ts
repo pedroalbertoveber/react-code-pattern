@@ -1,17 +1,27 @@
+// Cache
 import { get, set } from "../../services/cache";
 
+// Mappers
+import { EntityMapper } from "./EntityMapper";
+
+// Helpers
+import {
+  interceptor,
+  makeUrl,
+  mergeConfigurations,
+  verifyIfIsCustomRequest,
+} from "./helpers";
+
+// Types
 import type {
   GetCacheType,
   SetCacheProps,
   GetHttpRequestParams,
   PostHttpRequestParams,
   PutHttpRequestParams,
-  SetEntity,
-  MakeUrlParams,
+  GetHttpAndSetCacheProps,
   DefaultAxiosResponse,
   EntityConstructorProps,
-  CustomRequestRespose,
-  MergeConfigurationsParams,
 } from "./@types";
 
 /**
@@ -73,12 +83,12 @@ export abstract class Entity {
     }
 
     const fetchUrl =
-      this.makeUrl({ method: this.toString(method), url }) +
+      makeUrl({ method: EntityMapper.toString(method), url }) +
       (params.length > 0 ? `?${params.join("&")}` : "");
 
-    const configuration: RequestInit = await this.interceptor();
+    const configuration: RequestInit = await interceptor();
 
-    const requestConfig = await this.mergeConfigurations({
+    const requestConfig = mergeConfigurations({
       configuration,
       config,
     });
@@ -103,17 +113,17 @@ export abstract class Entity {
     method,
     config = {},
   }: PostHttpRequestParams<AllowedMethods>) {
-    const configuration: RequestInit = await this.interceptor();
+    const configuration: RequestInit = await interceptor();
 
-    const requestConfig = await this.mergeConfigurations({
+    const requestConfig = mergeConfigurations({
       configuration,
       config,
     });
 
     try {
       const response = await fetch(
-        this.makeUrl({
-          method: method ? this.toString(method) : this.baseUrl,
+        makeUrl({
+          method: method ? EntityMapper.toString(method) : this.baseUrl,
           url,
         }),
         {
@@ -137,17 +147,17 @@ export abstract class Entity {
     method,
     config = {},
   }: PutHttpRequestParams<AllowedMethods>) {
-    const configuration: RequestInit = await this.interceptor();
+    const configuration: RequestInit = await interceptor();
 
-    const requestConfig = await this.mergeConfigurations({
+    const requestConfig = mergeConfigurations({
       configuration,
       config,
     });
 
     try {
       const response = await fetch(
-        this.makeUrl({
-          method: method ? this.toString(method) : this.baseUrl,
+        makeUrl({
+          method: method ? EntityMapper.toString(method) : this.baseUrl,
           url,
         }),
         {
@@ -167,14 +177,14 @@ export abstract class Entity {
   /**
    *
    * This method should be called if you want to fetch data and set it on local storage
-   * If you're not using axios, you can pass your own return key instead of "data" as     paramater "customReturn"
+   * If you're not using axios, you can pass your own return key instead of "data" as paramater "customReturn"
    * @param method
    * @param url
-   * @param shouldUpdate
-   * @param customReturn
-   * @param cachePath
+   * @param shouldUpdate @default true - If you want to not use cache, pass false
+   * @param customReturn @default null - If you're not using axios, you can pass your own return key instead of "data"
+   * @param cachePath - If you want to use a different cache path, you can pass it here
    */
-  async setEntity<
+  async getHttpAndSetCache<
     Props,
     AllowedMethods,
     HttpResponse extends DefaultAxiosResponse
@@ -184,17 +194,22 @@ export abstract class Entity {
     shouldUpdate = true,
     customReturn = null,
     cachePath = this.cachePath,
-  }: SetEntity<HttpResponse>): Promise<Props> {
+  }: GetHttpAndSetCacheProps<HttpResponse>): Promise<Props> {
     const cache = await this.getCache<Props>({
       cachePath: cachePath || this.cachePath,
     });
-    const request = this.isCustomRequest({ url, cachePath });
+
+    const request = verifyIfIsCustomRequest({ 
+      cachePath: cachePath || this.cachePath,
+      baseUrl: url || this.baseUrl,
+      custom: method,
+    });
 
     const shouldUpdateEntity = shouldUpdate || !cache;
 
     if (shouldUpdateEntity) {
       const response = await this.getHttp<HttpResponse, AllowedMethods>({
-        method: this.toString(method),
+        method: EntityMapper.toString(method),
         url: request.url,
         config: {},
       });
@@ -209,61 +224,5 @@ export abstract class Entity {
     } else {
       return cache;
     }
-  }
-
-  // TODO passar para o .env
-  private makeUrl({ method = null, url = null }: MakeUrlParams) {
-    const apiUrl = "http://localhost:3333/";
-    const baseUrl = apiUrl + (url || this.baseUrl);
-    const _url = method ? baseUrl + "/" + method : baseUrl;
-    return _url;
-  }
-
-  private isCustomRequest(custom: any): CustomRequestRespose {
-    if (custom) {
-      return {
-        url: custom.url || this.baseUrl,
-        cachePath: custom.cachePath || this.cachePath,
-      };
-    }
-    return {
-      url: this.baseUrl,
-      cachePath: this.cachePath,
-    };
-  }
-
-  private async interceptor() {
-    // const token = await Auth.currentSession().then((result: any) => {
-    //   return result.getIdToken().getJwtToken();
-    // });
-
-    const token = "token";
-    const config: RequestInit = {
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json",
-      },
-    };
-
-    return config;
-  }
-
-  private async mergeConfigurations({
-    configuration,
-    config = null,
-  }: MergeConfigurationsParams) {
-    const merged = {
-      ...configuration,
-      ...config,
-      headers: {
-        ...configuration.headers,
-        ...config?.headers,
-      },
-    };
-    return merged;
-  }
-
-  private toString(value: any) {
-    return value ? value.toString() : "";
   }
 }
