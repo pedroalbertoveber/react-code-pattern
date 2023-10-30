@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext } from "react";
 import { Item } from "../entities/item";
 import { GetAllItemsUseCase } from "../entities/item/use-cases/get-all-items";
-import { GetAndSetCacheUseCase } from "../entities/item/use-cases/get-and-set-cache";
+import { GetItemByIdUseCase } from "@/entities/item/use-cases/get-item-by-id";
 
 type ItemsContextType = {
   ItemEntity: Item;
   getAllItems: GetAllItemsUseCase;
-  getAndSetCache: GetAndSetCacheUseCase;
+  getItemById: GetItemByIdUseCase;
 };
 
 export const ItemsContext = createContext<ItemsContextType>(
@@ -17,10 +17,10 @@ export const ItemsContextProvider = ({ children }: { children: ReactNode }) => {
   const ItemEntity = new Item()
 
   const getAllItems = new GetAllItemsUseCase(ItemEntity);
-  const getAndSetCache = new GetAndSetCacheUseCase(ItemEntity);
+  const getItemById = new GetItemByIdUseCase(ItemEntity);
 
   return (
-    <ItemsContext.Provider value={{ ItemEntity, getAllItems, getAndSetCache }}>
+    <ItemsContext.Provider value={{ ItemEntity, getAllItems, getItemById }}>
       {children}
     </ItemsContext.Provider>
   );

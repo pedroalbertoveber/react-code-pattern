@@ -2,6 +2,8 @@ export type MethodsBase = Record<string, string> | null;
 
 export type DefaultAxiosResponse = { data: any };
 
+import type { AxiosRequestConfig } from 'axios'
+
 type EntityConstructorProps = {
   baseUrl: string;
   cachePath: string;
@@ -61,4 +63,10 @@ export type MakeUrlParams = {
 export type MergeConfigurationsParams = {
   configuration: RequestInit;
   config?: Partial<RequestInit> | null; 
+}
+
+export type FetchProps<DefaultEndPoints> = {
+  overrideBaseUrl: string;
+  endpoint?: keyof DefaultEndPoints | string | null;
+  config?: AxiosRequestConfig;
 }

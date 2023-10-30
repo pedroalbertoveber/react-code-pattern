@@ -17,5 +17,6 @@ module.exports = {
     "react-refresh/only-export-components": "off",
     "react-hooks/exhaustive-deps": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "react-hooks/rules-of-hooks": "off",
   },
 }

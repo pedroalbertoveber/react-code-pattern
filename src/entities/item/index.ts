@@ -1,5 +1,5 @@
 // Core
-import { Entity } from "../core";
+import { Entity } from "../core/entity";
 import type { ItemProps } from "./@types";
 
 // Hooks
@@ -22,6 +22,9 @@ export class Item extends Entity {
   }
 
   public hooks = {
+    // useQuery,
+    ...this._hooks,
     useItem: useItem<ItemProps[]>([]),
   };
+
 }

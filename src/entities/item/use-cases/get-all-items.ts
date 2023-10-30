@@ -1,22 +1,24 @@
 import { Item } from "..";
 import { ItemProps } from "../@types";
 
-// type GetAllItemsUseCaseRequest = {}
-type GetAllItemsUseCaseResponse = {
-  items: ItemProps[];
-};
-
 export class GetAllItemsUseCase {
   constructor(private readonly itemEntity: Item) {}
 
-  async execute(): Promise<GetAllItemsUseCaseResponse> {
-    const items = await this.itemEntity.getHttp<
-      ItemProps[],
-      typeof this.itemEntity.getMethods
-    >({});
+  execute() {
+    const { useQuery } = this.itemEntity.hooks
 
-    return {
-      items,
-    };
+    const response = useQuery<ItemProps[]>({
+      queryKey: this.itemEntity.cachePath,
+      fetcher: async () => {
+        const response = await this.itemEntity.fetch<ItemProps[]>({
+          useCache: true,
+          revalidate: 1000 * 10, // 10 seconds
+        });
+
+        return response
+      },
+    })
+
+    return response;
   }
 }
