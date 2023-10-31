@@ -10,16 +10,16 @@ export function Item() {
     return null
   }
  
-  const { item } = getItemById.execute({ id })
+  const { data } = getItemById.execute({ id })
 
-  if (!item) {
+  if (!data) {
     return <p>Carregando...</p>
   }
 
   return (
     <Stack>
-      <Typography>{item.name} </Typography>
-      <Typography>{item.price}</Typography>
+      <Typography>{data.name} </Typography>
+      <Typography>{data.price}</Typography>
       <Typography>
         <Link to="/">Voltar</Link>
       </Typography>

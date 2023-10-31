@@ -4,6 +4,33 @@ export type DefaultAxiosResponse = { data: any };
 
 import type { AxiosRequestConfig } from 'axios'
 
+type FetchProps = {
+  overrideBaseUrl: string;
+  config?: AxiosRequestConfig;
+} & (
+  | {
+      useCache: true;
+      storage: "localstorage" | "sessionstorage";
+      cacheKey: string;
+      revalidate: number;
+    }
+  | {
+      useCache: false;
+    }
+);
+
+type SetLocalStorageProps = {
+  key?: string;
+  data: unknown;
+  revalidate: number;
+};
+
+type LocalStorageItemType<DataType> = {
+  expiresIn: Date;
+  data: DataType;
+};
+
+
 type EntityConstructorProps = {
   baseUrl: string;
   cachePath: string;

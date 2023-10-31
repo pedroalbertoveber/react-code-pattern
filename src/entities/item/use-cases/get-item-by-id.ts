@@ -12,10 +12,12 @@ export class GetItemByIdUseCase {
     const { useQuery } = this.itemEntity.hooks
 
     const response = useQuery<ItemProps>({
-      url: `${this.itemEntity.baseUrl}/${id}`,
+      queryKey: `@B2B-ITEM:ITEM-ID-${id}`,
       fetcher: async () => {
         const data = await this.itemEntity.fetch<ItemProps>({
           useCache: true,
+          overrideBaseUrl: `${this.itemEntity.baseUrl}/${id}`,
+          storage: 'localstorage',
           cacheKey: `@B2B-ITEM:ITEM-ID-${id}`,
           revalidate: 1000 * 15, // 15 seconds 
         })

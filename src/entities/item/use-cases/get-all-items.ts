@@ -13,6 +13,9 @@ export class GetAllItemsUseCase {
         const response = await this.itemEntity.fetch<ItemProps[]>({
           useCache: true,
           revalidate: 1000 * 10, // 10 seconds
+          cacheKey: this.itemEntity.cachePath,
+          overrideBaseUrl: this.itemEntity.baseUrl,
+          storage: "sessionstorage",
         });
 
         return response
